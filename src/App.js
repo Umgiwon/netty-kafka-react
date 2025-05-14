@@ -7,7 +7,7 @@ function App() {
 
   useEffect(() => {
     // SockJS 연결 생성
-    const socket = new SockJS('http://localhost:8080/ws'); // Spring Boot WebSocket 주소
+    const socket = new SockJS('http://localhost:8080/ws/device'); // Spring Boot WebSocket 주소
     const stompClient = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
@@ -16,11 +16,12 @@ function App() {
         console.log('🟢 Connected to WebSocket');
 
         // 토픽 구독
-        stompClient.subscribe('/topic/severance-comp-data', (message) => {
+        stompClient.subscribe('/sub/severance-comp-data', (message) => {
           if (message.body) {
-            const data = JSON.parse(message.body);
-            console.log('📥 Received:', data);
-            setMessages((prev) => [data, ...prev]); // 최신 데이터 먼저 표시
+            const outer = JSON.parse(message.body); // 1차 파싱
+            const inner = JSON.parse(outer.rawData); // 2차 파싱
+            console.log('📥 Received:', inner);
+            setMessages((prev) => [inner, ...prev]); // inner 객체 저장
           }
         });
       },
