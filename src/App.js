@@ -16,7 +16,7 @@ function App() {
         console.log('🟢 Connected to WebSocket');
 
         // 토픽 구독
-        stompClient.subscribe('/sub/severance-comp-data', (message) => {
+        stompClient.subscribe('/sub/severance-data', (message) => {
           if (message.body) {
             const outer = JSON.parse(message.body); // 1차 파싱
             const inner = JSON.parse(outer.rawData); // 2차 파싱
